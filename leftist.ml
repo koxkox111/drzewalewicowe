@@ -134,7 +134,7 @@ assert ((delete_min b) |> fst = -5);;
 
 let b = add 2 b;;
 assert ((delete_min b) |> fst = -5);;
-
+(* siemano *)
 let b = add 6 b;;
 assert ((delete_min b) |> fst = -5);;
 
