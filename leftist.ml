@@ -1,37 +1,23 @@
-(* Na czas testowania zmianiamy *)
-(*
-type 'a queue =
-| Leaf
-| Node of 'a queue * int *int * 'a queue
-*)
+(*  Zadanie drzewa lewicowe
+    Autor: Pawel Dec
+    Sprawdzajacy: Zofia Rusilowicz  *)
 type 'a queue =     (* LewySyn ; WartoscKorzenia ; DlugoscPrawego ; PrawySyn *)
 |   Leaf
 |   Node of 'a queue * 'a * int * 'a queue
 let empty =     (* Pusty Lisc *)
     Leaf
-
-exception Empty;; (* Dwa wyjatki, drugi powinien sie nie wlaczac *)
-exception Blad;;
-
+exception Empty;;
 let wysokosc a =    (* Zwraca DlugoscPrawego *)
     match a with
     |   Node(_,_,h,_)  ->  h
     |   Leaf -> 0
-
-let korzen a =      (* Zwraca WartoscKorzenia *)
-    match a with
-    |   Node(_,w,_,_) -> w
-    |   Leaf -> raise Empty;;
-
 let is_empty a =    (* Mowi czy drzewo jest puste *)
-    if(wysokosc a = 0) then 
-        true
-    else
-        false
-
+    match a with
+    | Leaf -> true
+    | _ -> false
 let popraw a =      (* Ustawia poprawnie synow i liczy DlugoscPrawego *)
     match a with
-    | Node(l,w,h,r)
+    | Node(l,w,_,r)
         -> let x = wysokosc l in 
             let y = wysokosc r in
             if(x < y) then
@@ -39,29 +25,24 @@ let popraw a =      (* Ustawia poprawnie synow i liczy DlugoscPrawego *)
             else
                 Node(l,w,y + 1,r)
     | _ -> Leaf
-    
 let rec join a b =      (* Laczy drzewa *)
     match a,b with
     |   (Leaf,_) -> b
     |   (_,Leaf) -> a
-    |   (Node(l1,w1,h1,r1),Node(l2,w2,h2,r2)) 
+    |   (Node(l1,w1,_,r1),Node(_,w2,_,_)) 
         ->  if(w1 > w2) then
                 join b a
             else
                 popraw (Node(l1,w1,0,join b r1))
-
 let add e q =   (* Dodaje element do drzewa *)
     join (Node(Leaf,e,1,Leaf)) q
-
 let delete_min a = (* Usuwa element z drzewa *)
-    if(is_empty a = true) then
-        raise Empty
-    else
-        match a with
-        |   Node(l1,w,_,r1) -> (w, (join l1 r1))
-        |   _ -> raise Blad;; (* nie powinno byc mozliwe *)
+    match a with
+    |   Node(l1,w,_,r1) -> (w, (join l1 r1))
+    |   Leaf -> raise Empty;;
 (*
 (* WYPISANIE DRZEWA *)
+(* UWAGA queue to INT, innaczej nie dziala *)
 let war a =
     (Printf.sprintf "%d" a)^" ";;
 let rec dodaj q x n = 
